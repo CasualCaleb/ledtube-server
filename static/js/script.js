@@ -1,18 +1,87 @@
 function ping() {
-      fetch('/ping')
+    fetch('/ping')
         .then(response => response.json())
         .then(data => {
-          console.log("Devices:", data.devices);
+      const ipList = data.devices || [];
+      const container = document.getElementById('device-ips');
 
-          const ipList = data.devices || [];
-          const output = ipList.join('\n');
-          document.getElementById('device-ips').textContent = output;
-        })
-        .catch(error => {
-          console.error("Ping failed:", error);
-          alert("Ping failed! Check console for details.");
-        });
-    }
+      container.innerHTML = '';
+
+      ipList.forEach((device, index) => {
+        const ip = device.ip;
+        const group = device.group;
+
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.marginBottom = '8px';
+        row.style.gap = '10px';
+
+        // IP label
+        const ipText = document.createElement('span');
+        ipText.textContent = ip;
+        ipText.style.flexGrow = '1';
+
+        // Radio Group Name — must be unique per device
+        const groupName = `device-${index}`;
+
+        // FG Radio
+        const fgLabel = document.createElement('label');
+        fgLabel.textContent = 'FG';
+        const fgRadio = document.createElement('input');
+        fgRadio.type = 'radio';
+        fgRadio.name = groupName;
+        fgRadio.onclick = () => changeGroup(ip, 'FG');
+        fgLabel.prepend(fgRadio);
+        // Pre check if device group is FG
+        if (group === 'FG') {
+          fgRadio.checked = true;
+        }
+
+        // BG Radio
+        const bgLabel = document.createElement('label');
+        bgLabel.textContent = 'BG';
+        const bgRadio = document.createElement('input');
+        bgRadio.type = 'radio';
+        bgRadio.name = groupName;
+        bgRadio.onclick = () => changeGroup(ip, 'BG');
+        bgLabel.prepend(bgRadio);
+        // Pre check if device group is BG
+        if (group === 'BG') {
+          bgRadio.checked = true;
+        }
+
+        // Assemble
+        row.appendChild(ipText);
+        row.appendChild(fgLabel);
+        row.appendChild(bgLabel);
+        container.appendChild(row);
+      });
+    })
+    .catch(error => {
+      console.error("Ping failed:", error);
+      alert("Ping failed! Check console for details.");
+    });
+}
+
+function findDevices() {
+  fetch('/findDevices')
+    .then(response => response.json())
+    .then(data => {
+        ping();
+    })
+    .catch(error => {
+      console.error("findDevices failed:", error);
+      alert("findDevices failed! Check console for details.");
+    });
+}
+
+function changeGroup(ip, group) {
+  fetch(`/setgroup?ip=${encodeURIComponent(ip)}&group=${encodeURIComponent(group)}`)
+    .then(response => response.json())
+    .then(data => console.log(`Sent:`, data))
+    .catch(err => alert(`Error: ${err}`));
+}
 
 function sendCommand(command) {
   fetch(`/udp?command=${encodeURIComponent(command)}`)

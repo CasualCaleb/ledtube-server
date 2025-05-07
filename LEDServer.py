@@ -16,8 +16,8 @@ app = Flask(__name__)
 def handle_root():
     return render_template("index.html"), 200
 
-@app.route('/ping')
-def handle_ping():
+@app.route('/findDevices')
+def handle_find_devices():
     devices.clear()
     # Setup and broadcast a ping
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -33,6 +33,27 @@ def handle_ping():
     except socket.timeout:
         pass  # Stop listening after timeout
     return {'status': 'done', 'devices': list({device.ip for device in devices})}, 200
+
+
+@app.route('/ping')
+def handle_ping():
+    ip_list = []
+    for device in devices:
+        ip_list.append({'ip': device.ip, 'group': device.group})
+
+    return {'devices': ip_list}, 200
+
+@app.route('/setgroup')
+def handle_set_group():
+    ip = request.args.get('ip')
+    group = request.args.get('group')
+
+    for device in devices:
+        if ip == device.ip:
+            device.group = group
+            break
+
+    return {'message': 'Success'}, 200
 
 @app.route('/udp')
 def handle_udp():
