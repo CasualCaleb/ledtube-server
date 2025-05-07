@@ -23,7 +23,7 @@ function ping() {
         ipText.style.flexGrow = '1';
 
         // Radio Group Name — must be unique per device
-        const radioGroupName = `${ip}`;
+        const radioGroupName = ip;
         // FG Radio
         const fgLabel = document.createElement('label');
         fgLabel.textContent = 'FG';
