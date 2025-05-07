@@ -23,14 +23,13 @@ function ping() {
         ipText.style.flexGrow = '1';
 
         // Radio Group Name — must be unique per device
-        const groupName = `${ip}`;
-
+        const radioGroupName = `${ip}`;
         // FG Radio
         const fgLabel = document.createElement('label');
         fgLabel.textContent = 'FG';
         const fgRadio = document.createElement('input');
         fgRadio.type = 'radio';
-        fgRadio.name = groupName;
+        fgRadio.name = radioGroupName;
         fgRadio.onclick = () => changeGroup(ip, 'FG');
         fgLabel.prepend(fgRadio);
         // Pre check if device group is FG
@@ -43,7 +42,7 @@ function ping() {
         bgLabel.textContent = 'BG';
         const bgRadio = document.createElement('input');
         bgRadio.type = 'radio';
-        bgRadio.name = groupName;
+        bgRadio.name = radioGroupName;
         bgRadio.onclick = () => changeGroup(ip, 'BG');
         bgLabel.prepend(bgRadio);
         // Pre check if device group is BG
