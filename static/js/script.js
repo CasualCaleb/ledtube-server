@@ -1,79 +1,75 @@
+function createLabels(devices) {
+  const container = document.getElementById("container");
+  container.innerHTML = '';
+  devices.forEach(device => {
+    const entry = document.createElement('div');
+    entry.className = 'device';
+
+    // Create and append the status dot
+    const dot = document.createElement('span');
+    dot.className = 'status ' + (device.status ? 'online' : 'offline');
+    entry.appendChild(dot);
+
+    // Create and append the IP
+    const ipLabel = document.createElement('span');
+    ipLabel.textContent = device.ip;
+    entry.appendChild(ipLabel);
+
+    // SETUP FG RADIO BUTTON
+    const fgLabel = document.createElement('label');
+    fgLabel.textContent = 'FG';
+    const fgRadio = document.createElement('input');
+    fgRadio.type = 'radio';
+    fgRadio.name = device.ip;
+    fgRadio.value = 'FG';
+    fgRadio.checked = device.group === 'FG'
+
+    fgRadio.onclick = () => {
+        fetch(`/devices/setGroup?ip=${device.ip}&group=FG`)
+            .then(res => res.json())
+            .then(data => console.log(data.message || data.error))
+            .catch(err => console.error('Request failed:', err));
+    };
+    fgLabel.prepend(fgRadio);
+
+    // SETUP BG RADIO BUTTON
+    const bgLabel = document.createElement('label');
+    bgLabel.textContent = 'BG';
+    const bgRadio = document.createElement('input');
+    bgRadio.type = 'radio';
+    bgRadio.name = device.ip;
+    bgRadio.value = 'BG';
+    bgRadio.checked = device.group === 'BG'
+    bgRadio.onclick = () => {
+        fetch(`/devices/setGroup?ip=${device.ip}&group=BG`)
+            .then(res => res.json())
+            .then(data => console.log(data.message || data.error))
+            .catch(err => console.error('Request failed:', err));
+    };
+    bgLabel.prepend(bgRadio);
+
+    // Append FG button
+    fgLabel.prepend(fgRadio);
+    entry.appendChild(fgLabel);
+    entry.appendChild(fgLabel);
+    // Append BG button
+    bgLabel.prepend(bgRadio);
+    entry.appendChild(bgLabel);
+    entry.appendChild(bgLabel);
+
+    // Append entry to the container
+    container.appendChild(entry);
+  });
+}
+
 function ping() {
-  fetch('/ping')
-    .then(response => response.json())
-    .then(data => {
-      const ipList = data.devices || [];
-      const container = document.getElementById('device-ips');
-      container.innerHTML = '';
-
-      ipList.forEach(({ ip, group }) => {
-        const row = document.createElement('div');
-        row.classList.add('device-row');
-
-        // IP Text
-        const ipText = document.createElement('span');
-        ipText.textContent = ip;
-        ipText.classList.add('device-ip');
-        const radioGroupName = ip; // one group per IP
-
-        // FG Label + Radio
-        const fgLabel = document.createElement('label');
-        fgLabel.classList.add('group-label');
-
-        const fgRadio = document.createElement('input');
-        fgRadio.type = 'radio';
-        fgRadio.name = radioGroupName;
-        fgRadio.checked = group === 'FG';
-        fgRadio.classList.add('group-radio');
-        fgRadio.onclick = () => changeGroup(ip, 'FG');
-
-        fgLabel.appendChild(fgRadio);
-        fgLabel.appendChild(document.createTextNode('FG'));
-
-        // BG Label + Radio
-        const bgLabel = document.createElement('label');
-        bgLabel.classList.add('group-label');
-
-        const bgRadio = document.createElement('input');
-        bgRadio.type = 'radio';
-        bgRadio.name = radioGroupName;
-        bgRadio.checked = group === 'BG';
-        bgRadio.classList.add('group-radio');
-        bgRadio.onclick = () => changeGroup(ip, 'BG');
-
-        bgLabel.appendChild(bgRadio);
-        bgLabel.appendChild(document.createTextNode('BG'));
-
-        // Assemble the row
-        row.appendChild(ipText);
-        row.appendChild(fgLabel);
-        row.appendChild(bgLabel);
-        container.appendChild(row);
-      });
+  fetch('/devices/ping')
+    .then(res => {
+      if (!res.ok) throw new Error('Network response not OK');
+      return res.json();
     })
-    .catch(error => {
-      console.error("Ping failed:", error);
-      alert("Ping failed! Check console for details.");
-    });
-}
-
-function findDevices() {
-  fetch('/findDevices')
-    .then(response => response.json())
-    .then(data => {
-        ping();
-    })
-    .catch(error => {
-      console.error("findDevices failed:", error);
-      alert("findDevices failed! Check console for details.");
-    });
-}
-
-function changeGroup(ip, group) {
-  fetch(`/setgroup?ip=${encodeURIComponent(ip)}&group=${encodeURIComponent(group)}`)
-    .then(response => response.json())
-    .then(data => console.log(`Sent:`, data))
-    .catch(err => alert(`Error: ${err}`));
+    .then(data => createLabels(data.devices || []))
+    .catch(err => console.error('Ping error:', err));
 }
 
 function sendCommand(command) {
@@ -117,7 +113,6 @@ function hexToHue(hex) {
   return Math.round((h / 360) * 255); // Scale to 0–255 for FastLED-style hue
 }
 
-// Every refresh this code gets ran
-window.onload = function () {
-  ping();
-};
+// Auto-ping every 1 seconds
+setInterval(ping, 2000);
+ping();

@@ -5,9 +5,10 @@ devices = []
 UDP_PORT = 4210
 
 class LightTube:
-    def __init__(self, ip, group=""):
+    def __init__(self, ip):
         self.ip = ip
-        self.group = group
+        self.group = ''
+        self.status = True
 
 # Setup Flask app
 app = Flask(__name__)
@@ -16,44 +17,50 @@ app = Flask(__name__)
 def handle_root():
     return render_template("index.html"), 200
 
-@app.route('/findDevices')
-def handle_find_devices():
-    devices.clear()
-    # Setup and broadcast a ping
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    sock.settimeout(0.5)
-    # Broadcast happens here
-    sock.sendto("LEDPing:;".encode(), ('192.168.0.255', UDP_PORT))
-
-    try:
-        while True:
-            ip = sock.recvfrom(1024)[1][0]   # Retrieves IP from address
-            devices.append(LightTube(ip))
-    except socket.timeout:
-        pass  # Stop listening after timeout
-    return {'status': 'done', 'devices': list({device.ip for device in devices})}, 200
-
-
-@app.route('/ping')
-def handle_ping():
-    ip_list = []
-    for device in devices:
-        ip_list.append({'ip': device.ip, 'group': device.group})
-
-    return {'devices': ip_list}, 200
-
-@app.route('/setgroup')
+@app.route('/devices/setGroup')
 def handle_set_group():
     ip = request.args.get('ip')
     group = request.args.get('group')
 
-    for device in devices:
-        if ip == device.ip:
-            device.group = group
-            break
+    for d in devices:
+        if d.ip == ip:
+            d.group = group
+            return {'message': f"{ip} group set to: {group}"}, 200
+    return {"error": "Could not that find device"}, 400
 
-    return {'ip': ip, 'group': group}, 200
+@app.route('/devices/ping', methods=['GET'])
+def ping_devices():
+    # Setup and broadcast a ping
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    sock.settimeout(1)
+    # Broadcast happens here
+    sock.sendto("LEDPing:;".encode(), ('192.168.0.255', UDP_PORT))
+
+    # Turn all device status's off to start
+    for d in devices:
+        d.status = False
+
+    try:
+        while True:
+            data, addr = sock.recvfrom(1024) # Retrieves response from device
+            ip = addr[0]
+            msg = data.decode('ascii')
+
+            found = False
+            if msg == 'PONG:;':
+                for d in devices:
+                    if d.ip == ip:
+                        d.status = True
+                        found = True
+                        break
+
+            if not found:
+                devices.append(LightTube(ip))
+
+    except socket.timeout:
+        pass  # Stop listening after timeout
+    return {'devices': [{'ip': d.ip, 'status': d.status, 'group': d.group} for d in devices]}, 200
 
 @app.route('/udp')
 def handle_udp():

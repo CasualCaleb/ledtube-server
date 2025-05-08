@@ -4,18 +4,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>LED Server</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
+  <div style="position: absolute; top: 50px; left: 50px;">
+    <h1>Devices</h1>
+    <div id="container"></div>
+  </div>
+
   <div>
     <h1>Color</h1>
-    <input type="color" id="primary" value="#ff0000" oninput="handleColorPick(this.value)">
+    <label class="color-picker-wrapper">
+      <input type="color" id="primary" value="#ff0000" class="color-picker" oninput="handleColorPick(this.value)">
+    </label>
   </div>
 
   <div>
     <h1>Animations</h1>
-    <button style="background-color: #1c1c1c; color: white" onclick="sendCommand('animation:0;')">OFF</button>
+    <button style="background-color: #101010; color: white" onclick="sendCommand('animation:0;')">Off</button>
     <button onclick="sendCommand('animation:1;')">Fast-Scroll</button>
     <button onclick="sendCommand('animation:2;')">Slow-Scroll</button>
     <br>
@@ -23,12 +32,12 @@
     <button onclick="sendCommand('animation:4;')">Flash</button>
     <button onclick="sendCommand('animation:5;')">Flash w</button>
     <br>
-    <button style="background-color: #BFA5F3; color: black;" onclick="sendCommand('animation:6;')">Strobe</button>
+    <button style="background-color: #B9A8AB; color: #101010;" onclick="sendCommand('animation:6;')">Strobe</button>
   </div>
 
   <div>
     <h1>Combos</h1>
-    <button style="background-color: #BFA5F3; color: black;" onclick="sendComboCommand('animation:6;', 'animation:5;')">Peak Hype</button>
+    <button style="background-color: #B9A8AB; color: #101010;" onclick="sendComboCommand('animation:6;', 'animation:5;')">Peak Hype</button>
     <button onclick="sendComboCommand('animation:1;', 'animation:4;')">Beat Pump</button>
   </div>
 
@@ -36,13 +45,7 @@
     <h1>Time</h1>
     <button onclick="sendCommand('doubleTime:;')">Double</button>
     <button onclick="sendCommand('halfTime:;')">half</button>
-    <button style="background-color: #1c1c1c; color: white" onclick="sendCommand('defaultTime:;')">Default</button>
-  </div>
-
-  <div class="device-wrapper">
-    <h1>Devices</h1>
-    <button onclick="findDevices()">Find Devices</button>
-    <div id="device-ips"></div>
+    <button style="background-color: #101010; color: white" onclick="sendCommand('defaultTime:;')">Default</button>
   </div>
 
   <script src="/static/js/script.js"></script>
