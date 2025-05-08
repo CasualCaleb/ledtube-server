@@ -53,7 +53,7 @@ def handle_set_group():
             device.group = group
             break
 
-    return {'message': 'Success'}, 200
+    return {'ip': ip, 'group': group}, 200
 
 @app.route('/udp')
 def handle_udp():

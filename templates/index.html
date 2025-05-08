@@ -16,15 +16,20 @@
   <div>
     <h1>Animations</h1>
     <button style="background-color: #1c1c1c; color: white" onclick="sendCommand('animation:0;')">OFF</button>
-    <br>
     <button onclick="sendCommand('animation:1;')">Fast-Scroll</button>
     <button onclick="sendCommand('animation:2;')">Slow-Scroll</button>
     <br>
     <button onclick="sendCommand('animation:3;')">Slow-Scroll w</button>
     <button onclick="sendCommand('animation:4;')">Flash</button>
-    <br>
     <button onclick="sendCommand('animation:5;')">Flash w</button>
+    <br>
     <button style="background-color: #BFA5F3; color: black;" onclick="sendCommand('animation:6;')">Strobe</button>
+  </div>
+
+  <div>
+    <h1>Combos</h1>
+    <button style="background-color: #BFA5F3; color: black;" onclick="sendComboCommand('animation:6;', 'animation:5;')">Peak Hype</button>
+    <button onclick="sendComboCommand('animation:1;', 'animation:4;')">Beat Pump</button>
   </div>
 
   <div>
@@ -34,16 +39,10 @@
     <button style="background-color: #1c1c1c; color: white" onclick="sendCommand('defaultTime:;')">Default</button>
   </div>
 
-  <div>
-    <h1>Combos</h1>
-    <button style="background-color: #BFA5F3; color: black;" onclick="sendComboCommand('animation:6;', 'animation:5;')">Peak Hype</button>
-    <button onclick="sendComboCommand('animation:1;', 'animation:4;')">Beat Pump</button>
-  </div>
-
-  <div id="ping-button">
-    <button onclick="findDevices()">Find Devices</button>
+  <div class="device-wrapper">
     <h1>Devices</h1>
-    <p id="device-ips"></p>
+    <button onclick="findDevices()">Find Devices</button>
+    <div id="device-ips"></div>
   </div>
 
   <script src="/static/js/script.js"></script>

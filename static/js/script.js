@@ -1,56 +1,50 @@
 function ping() {
-    fetch('/ping')
-        .then(response => response.json())
-        .then(data => {
+  fetch('/ping')
+    .then(response => response.json())
+    .then(data => {
       const ipList = data.devices || [];
       const container = document.getElementById('device-ips');
-
       container.innerHTML = '';
 
-      ipList.forEach((device, index) => {
-        const ip = device.ip;
-        const group = device.group;
-
+      ipList.forEach(({ ip, group }) => {
         const row = document.createElement('div');
-        row.style.display = 'flex';
-        row.style.alignItems = 'center';
-        row.style.marginBottom = '8px';
-        row.style.gap = '10px';
+        row.classList.add('device-row');
 
-        // IP label
+        // IP Text
         const ipText = document.createElement('span');
         ipText.textContent = ip;
-        ipText.style.flexGrow = '1';
+        ipText.classList.add('device-ip');
+        const radioGroupName = ip; // one group per IP
 
-        // Radio Group Name — must be unique per device
-        const radioGroupName = ip;
-        // FG Radio
+        // FG Label + Radio
         const fgLabel = document.createElement('label');
-        fgLabel.textContent = 'FG';
+        fgLabel.classList.add('group-label');
+
         const fgRadio = document.createElement('input');
         fgRadio.type = 'radio';
         fgRadio.name = radioGroupName;
+        fgRadio.checked = group === 'FG';
+        fgRadio.classList.add('group-radio');
         fgRadio.onclick = () => changeGroup(ip, 'FG');
-        fgLabel.prepend(fgRadio);
-        // Pre check if device group is FG
-        if (group === 'FG') {
-          fgRadio.checked = true;
-        }
 
-        // BG Radio
+        fgLabel.appendChild(fgRadio);
+        fgLabel.appendChild(document.createTextNode('FG'));
+
+        // BG Label + Radio
         const bgLabel = document.createElement('label');
-        bgLabel.textContent = 'BG';
+        bgLabel.classList.add('group-label');
+
         const bgRadio = document.createElement('input');
         bgRadio.type = 'radio';
         bgRadio.name = radioGroupName;
+        bgRadio.checked = group === 'BG';
+        bgRadio.classList.add('group-radio');
         bgRadio.onclick = () => changeGroup(ip, 'BG');
-        bgLabel.prepend(bgRadio);
-        // Pre check if device group is BG
-        if (group === 'BG') {
-          bgRadio.checked = true;
-        }
 
-        // Assemble
+        bgLabel.appendChild(bgRadio);
+        bgLabel.appendChild(document.createTextNode('BG'));
+
+        // Assemble the row
         row.appendChild(ipText);
         row.appendChild(fgLabel);
         row.appendChild(bgLabel);
