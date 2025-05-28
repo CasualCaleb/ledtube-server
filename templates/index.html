@@ -4,48 +4,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>LED Server</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
-  <div>
-    <h1>Color</h1>
-    <input type="color" id="primary" value="#ff0000" oninput="handleColorPick(this.value)">
-  </div>
+<div style="position: absolute; top: 50px; left: 50px;">
+  <h1>Devices</h1>
+  <div id="container"></div>
+</div>
 
-  <div>
-    <h1>Animations</h1>
-    <button style="background-color: #1c1c1c; color: white" onclick="sendCommand('animation:0;')">OFF</button>
-    <br>
-    <button onclick="sendCommand('animation:1;')">Fast-Scroll</button>
-    <button onclick="sendCommand('animation:2;')">Slow-Scroll</button>
-    <br>
-    <button onclick="sendCommand('animation:3;')">Slow-Scroll w</button>
-    <button onclick="sendCommand('animation:4;')">Flash</button>
-    <br>
-    <button onclick="sendCommand('animation:5;')">Flash w</button>
-    <button style="background-color: #BFA5F3; color: black;" onclick="sendCommand('animation:6;')">Strobe</button>
-  </div>
+<div>
+  <h1>Color</h1>
+  <label class="color-picker-wrapper">
+    <input type="color" id="primary" value="#ff0000" class="color-picker" oninput="handleColorPick(this.value)">
+  </label>
+</div>
 
-  <div>
-    <h1>Time</h1>
-    <button onclick="sendCommand('doubleTime:;')">Double</button>
-    <button onclick="sendCommand('halfTime:;')">half</button>
-    <button style="background-color: #1c1c1c; color: white" onclick="sendCommand('defaultTime:;')">Default</button>
-  </div>
+<div>
+  <h1>Animations</h1>
+  <button style="background-color: #101010; color: white" onclick="sendCommand('animation:0;')">Off</button>
+  <button onclick="sendCommand('animation:9;')">Solid</button>
+  <br>
+  <button onclick="sendCommand('animation:10;')">Solid w</button>
+  <button onclick="sendCommand('animation:1;')">Fast-Scroll</button>
+  <br>
+  <button onclick="sendCommand('animation:2;')">Slow-Scroll</button>
+  <button onclick="sendCommand('animation:3;')">Slow-Scroll w</button>
+  <br>
+  <button onclick="sendCommand('animation:7;')">BeatBump</button>
+  <button onclick="sendCommand('animation:8;')">BeatBump w</button>
+  <br>
+  <button onclick="sendCommand('animation:4;')">BeatFade</button>
+  <button onclick="sendCommand('animation:5;')">BeatFade w</button>
+  <br>
+  <button style="background-color: #B9A8AB; color: #101010;" onclick="sendCommand('animation:6;')">Strobe</button>
+  <br>
+  <p>Combos</p>
+  <button style="background-color: #B9A8AB; color: #101010;" onclick="sendComboCommand('animation:6;', 'animation:5;')">Peak Hype</button>
+  <button onclick="sendComboCommand('animation:1;', 'animation:4;')">Beat Pump</button>
+</div>
 
-  <div>
-    <h1>Combos</h1>
-    <button style="background-color: #BFA5F3; color: black;" onclick="sendComboCommand('animation:6;', 'animation:5;')">Peak Hype</button>
-    <button onclick="sendComboCommand('animation:1;', 'animation:4;')">Beat Pump</button>
-  </div>
+<div>
+  <h1>BPM</h1>
+  <input type="number" id="bpmInput" value="120" style="width: 100px; padding: 5px;">
+  <button onclick="setDefaultBPM()" style="width: 100px; padding: 5px; background-color: #B9A8AB;">Set BPM</button>
+  <br>
+  <button onclick="doubleBPM()">Double</button>
+  <button onclick="halfBPM()">half</button>
+  <br>
+  <button style="background-color: #101010; color: white" onclick="defaultTime()">Default</button>
+</div>
 
-  <div>
-    <h1>Ping Devices</h1>
-    <button onclick="ping()">Ping</button>
-  </div>
-
-  <script src="/static/js/script.js"></script>
+<script src="/static/js/script.js"></script>
 
 </body>
 </html>
