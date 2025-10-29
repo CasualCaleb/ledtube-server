@@ -35,11 +35,3 @@ http://127.0.0.1:5000
 See requirements.txt. Core dependency:
 
 - Flask
-
-## 📄 License
-
-MIT — do what you want, just don’t sue me.
-
-## 🧠 Author
-
-Made by Caleb McMullin fueled by house beats, LED strips, and a mild obsession with overengineering lighting systems.
